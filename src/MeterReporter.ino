@@ -1,14 +1,8 @@
 /*
  * Project MeterReporter
- * Description:
- * Author:
- * Date:
+ * Description: Takes Serial data and transform it to a web api
+ * Date: 2022-11-05
  */
-
- /* Particle Photon with MAC 3c:e1:a1:5b:7b:6b statically mapped to 192.168.1.202
-  * Status of the Meter is accessed through
-  * http://192.168.1.202/status
-  */
 
 #include "RdWebServer.h"
 #include "RdWebServerResources.h"
@@ -31,6 +25,8 @@ void meterStatus(RestAPIEndpointMsg& apiMsg, String& retStr) {
 }
 
 void setup() {
+  WiFi.selectAntenna(ANT_EXTERNAL);
+
   // RX pin on the Photon
   Serial1.begin(115200, SERIAL_8N1);
 
@@ -62,19 +58,21 @@ void loop() {
 }
 
 void readMeter() {
-  if (Serial1.available() == -1) {
+  if (!Serial1.available()) {
     return;
   }
 
   digitalWrite(D7, 1);
 
+  meterData = String("");
+
   while (1) {
-    String line = Serial1.readString();
+    String line = Serial1.readStringUntil('\n');
     Log.info(line);
+    meterData.concat(line);
     if (line.startsWith("!")) {
       digitalWrite(D7, 0);
       return;
     }
-    meterData.concat(line);
   }
 }
