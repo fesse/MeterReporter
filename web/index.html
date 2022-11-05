@@ -1,0 +1,39 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Power Overview</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link href="css/site.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Add your site or application content here -->
+  <h1>Lagerwall Power Overview</h1>
+  <div class="gauge">
+    <canvas class="display" id="ConsumptionGauge"></canvas>
+    <div id="ConsumptionText" class="text">Consumption</div>
+    <div id="ConsumptionValue" class="text text2"></div>
+  </div>
+
+  <div class="gauge">
+    <canvas class="display" id="ProductionGauge"></canvas>
+    <div id="ProductionText" class="text">Production</div>
+    <div id="ProductionValue" class="text text2"></div>
+  </div>
+
+  <script src="js/gauge.min.js"></script> <!-- Taken from https://bernii.github.io/gauge.js/ -->
+  <script src="js/meterInterface.js"></script> <!-- Interface against the meter -->
+  <script src="js/controller.js"></script> <!-- The page scripts-->
+</body>
+
+</html>
