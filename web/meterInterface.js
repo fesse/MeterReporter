@@ -1,5 +1,6 @@
 meterInterface = function () {
 
+	const STATUS_URL = "http://192.168.1.202/status";
 	const TIME = "0-0:1.0.0";
 	const ACTIVE_EFFECT_CONSUMPTION = "1-0:1.7.0";
 	const ACTIVE_EFFECT_PRODUCTION = "1-0:2.7.0";
@@ -14,7 +15,7 @@ meterInterface = function () {
 				data = this.responseText;
 			}
 		};
-		xhttp.open("GET", "http://192.168.1.202/status", true);
+		xhttp.open("GET", STATUS_URL, true);
 		xhttp.send();
 	}
 

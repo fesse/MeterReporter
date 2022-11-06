@@ -7,6 +7,7 @@
 #include "RdWebServer.h"
 #include "RdWebServerResources.h"
 #include "RestAPIEndpoints.h"
+#include "MeterWebResources.h"
 
 SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC);
@@ -48,6 +49,7 @@ void setup() {
 
   // Construct server
   pWebServer = new RdWebServer();
+  pWebServer->addStaticResources(genResourcesEx, genResourcesExCount);
   pWebServer->addRestAPIEndpoints(&restAPIEndpoints);
   pWebServer->start(webServerPort);
 }

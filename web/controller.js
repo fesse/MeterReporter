@@ -20,8 +20,8 @@ function init() {
 		highDpiSupport: true,     // High resolution support
 
 		staticZones: [
-			{ strokeStyle: "#F03E3E", min: 0, max: 15000 },
-			{ strokeStyle: "#30B32D", min: 15000, max: 30000 }
+			{ strokeStyle: "#30B32D", min: 0, max: 15000 },
+			{ strokeStyle: "#F03E3E", min: 15000, max: 30000 }
 		],
 	};
 
@@ -38,8 +38,8 @@ function init() {
 }
 
 function updateGuage() {
-	var value = -meterInterface.getConsumption();
-	value += meterInterface.getProduction();
+	var value = meterInterface.getConsumption();
+	value -= meterInterface.getProduction();
 	gauge.set(15000 + value);
 	document.getElementById("Value").innerHTML = value + " W";
 	document.getElementById("Time").innerHTML = meterInterface.getTime();

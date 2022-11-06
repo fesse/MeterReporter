@@ -1,0 +1,113 @@
+#!/usr/bin/java --source 11
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.zip.GZIPOutputStream;
+
+public class CreateWebResources {
+    private static final String DESTINATION_FILE = "src/MeterWebResources.h";
+
+    private static final File[] FILES = {
+            new File("web", "index.html", "text/html"),
+            new File("web", "controller.js", "text/javascript"),
+            new File("web", "gauge.min.js", "text/javascript"),
+            new File("web", "meterInterface.js", "text/javascript"),
+            new File("web", "site.css", "text/css")
+    };
+
+    private static StringBuilder result = new StringBuilder();
+
+    public static void main(String[] args) throws IOException {
+        checkPath();
+        addHeader();
+        for (File file : FILES) {
+            addFile(file);
+        }
+        addFooter();
+        Files.writeString(Paths.get(DESTINATION_FILE), result.toString());
+        System.out.println("Generated a new src/MeterWebResources.h from the files in the web folder");
+    }
+
+    private static void checkPath() {
+        if (!Paths.get(DESTINATION_FILE).toFile().exists()) {
+            throw new IllegalStateException("Must stand in root of the project. And there must be a file called src/MeterWebResources.h");
+        }
+    }
+
+    private static void addHeader() {
+        result.append("// Auto generated file of the content in the web folder\n");
+        result.append("#include \"RdWebServerResources.h\"\n\n");
+    }
+
+    private static void addFooter() {
+        result.append("// Resource descriptions\n");
+        result.append("static RdWebServerResourceDescr genResourcesEx[] = {");
+        for (File file : FILES) {
+            result.append("\n\tRdWebServerResourceDescr(");
+            result.append("\"").append(file.name).append("\", \"").append(file.contentType).append("\", \"gzip\", ");
+            result.append("resoex_").append(file.codeName).append(", sizeof(resoex_").append(file.codeName).append(")-1),");
+        }
+        result.setLength(result.length() - 1);
+        result.append("\n};\n\n");
+        result.append("static int genResourcesExCount = sizeof(genResourcesEx) / sizeof(RdWebServerResourceDescr);\n");
+    }
+
+    private static void addFile(File file) throws IOException {
+        byte[] data = Files.readAllBytes(Paths.get(file.folder + "/" + file.name));
+        byte[] compressed = gzipCompress(data);
+
+        result.append("static const uint8_t resoex_" + file.codeName + "[] {\n");
+        result.append("\t");
+
+        int col = 1;
+        for (byte aByte : compressed) {
+            result.append("0x");
+            int decimal = (int) aByte & 0xff;
+            String hex = Integer.toHexString(decimal);
+            if (hex.length() % 2 == 1) {
+                hex = "0" + hex;
+            }
+            hex = hex.toUpperCase();
+            result.append(hex);
+
+            result.append(",");
+            if (col == 16) {
+                result.append("\n\t");
+                col = 0;
+            }
+            col++;
+        }
+        if (result.charAt(result.length() - 1) == ',') {
+            result.setLength(result.length() - 1);
+        } else if (result.charAt(result.length() - 1) == '\t') {
+            result.setLength(result.length() - 3);
+        }
+        result.append("\n};\n\n");
+    }
+
+    private static byte[] gzipCompress(byte[] uncompressedData) throws IOException {
+        byte[] result;
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(uncompressedData.length);
+             GZIPOutputStream gzipOS = new GZIPOutputStream(bos)) {
+            gzipOS.write(uncompressedData);
+            gzipOS.close();
+            result = bos.toByteArray();
+        }
+        return result;
+    }
+
+    private static class File {
+        String folder;
+        String name;
+        String contentType;
+        String codeName;
+
+        public File(String folder, String name, String contentType) {
+            this.folder = folder;
+            this.name = name;
+            this.contentType = contentType;
+            codeName = name.replaceAll("\\.", "_");
+        }
+    }
+}
