@@ -20,7 +20,7 @@
 
 .text {
 	position: absolute;
-	top: 25px;
+	top: 50px;
 	left: 0;
 	right: 0;
 	text-align: center;
@@ -31,5 +31,6 @@
 }
 
 .text2 {
-	top: 65px;
+	font-size: 1 em;
+	top: 10px;
 }

@@ -1,6 +1,5 @@
 
-var consumptionGauge;
-var productionGague;
+var gauge;
 
 function init() {
 	var opts = {
@@ -19,35 +18,31 @@ function init() {
 		strokeColor: '#E0E0E0',  // to see which ones work best for you
 		generateGradient: true,
 		highDpiSupport: true,     // High resolution support
+
+		staticZones: [
+			{ strokeStyle: "#F03E3E", min: 0, max: 15000 },
+			{ strokeStyle: "#30B32D", min: 15000, max: 30000 }
+		],
 	};
 
-	var target = document.getElementById('ConsumptionGauge'); // your canvas element
-	consumptionGauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-	consumptionGauge.maxValue = 20000; // set max gauge value
-	consumptionGauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-	consumptionGauge.animationSpeed = 32; // set animation speed (32 is default value)
-	consumptionGauge.set(0);
-
-	target = document.getElementById('ProductionGauge'); // your canvas element
-	productionGague = new Gauge(target).setOptions(opts); // create sexy gauge!
-	productionGague.maxValue = 14000; // set max gauge value
-	productionGague.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-	productionGague.animationSpeed = 32; // set animation speed (32 is default value)
-	productionGague.set(0);
+	var target = document.getElementById('Gauge'); // your canvas element
+	gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+	gauge.maxValue = 30000; // set max gauge value
+	gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+	gauge.animationSpeed = 32; // set animation speed (32 is default value)
+	gauge.set(15000);
 
 	setInterval(function () {
-		updateGuages();
-	}, 4000);
+		updateGuage();
+	}, 1000);
 }
 
-function updateGuages() {
-	var value = meterInterface.getConsumption();
-	document.getElementById("ConsumptionValue").innerHTML = value;
-	consumptionGauge.set(value);
-
-	value = meterInterface.getProduction();
-	document.getElementById("ProductionValue").innerHTML = value;
-	productionGague.set(value);
+function updateGuage() {
+	var value = -meterInterface.getConsumption();
+	value += meterInterface.getProduction();
+	gauge.set(15000 + value);
+	document.getElementById("Value").innerHTML = value + " W";
+	document.getElementById("Time").innerHTML = meterInterface.getTime();
 }
 
 init();
