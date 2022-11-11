@@ -57,7 +57,7 @@ void setup() {
 void loop() {
   pWebServer->service();
   readMeter();
-  delay(50);
+  delay(10);
 }
 
 void readMeter() {
@@ -81,7 +81,7 @@ void readMeter() {
  * delay in the loop to preserve power
  */
 hal_usart_buffer_config_t acquireSerial1Buffer() {
-  const size_t bufferSize = 1024;
+  const size_t bufferSize = 1024 * sizeof(uint16_t);
   hal_usart_buffer_config_t config = {
       .size = sizeof(hal_usart_buffer_config_t),
       .rx_buffer = new (std::nothrow) uint8_t[bufferSize],
