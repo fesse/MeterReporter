@@ -13,7 +13,8 @@ public class CreateWebResources {
             new File("web", "controller.js", "text/javascript"),
             new File("web", "gauge.min.js", "text/javascript"),
             new File("web", "meterInterface.js", "text/javascript"),
-            new File("web", "site.css", "text/css")
+            new File("web", "site.css", "text/css"),
+            new File("web", "favicon.png", "image/png")
     };
 
     private static StringBuilder result = new StringBuilder();

@@ -12,8 +12,6 @@
 SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(AUTOMATIC);
 
-SerialLogHandler logHandler(LOG_LEVEL_INFO);
-
 int webServerPort = 80;
 
 RestAPIEndpoints restAPIEndpoints;
@@ -35,13 +33,11 @@ void setup() {
   digitalWrite(D7, 0);
 
   delay(3000);
-  Log.info("Meter status reporter");
 
   while (1) {
     if (WiFi.ready())
       break;
-    delay(5000);
-    Log.warn("Waiting for WiFi");
+    delay(1000);
   }
 
   // Add endpoint
@@ -52,11 +48,16 @@ void setup() {
   pWebServer->addStaticResources(genResourcesEx, genResourcesExCount);
   pWebServer->addRestAPIEndpoints(&restAPIEndpoints);
   pWebServer->start(webServerPort);
+
+  // Turn off LED to preserve power
+  RGB.control(true);
+  RGB.color(0, 0, 0);
 }
 
 void loop() {
   pWebServer->service();
   readMeter();
+  delay(50);
 }
 
 void readMeter() {
@@ -64,17 +65,29 @@ void readMeter() {
     return;
   }
 
-  digitalWrite(D7, 1);
-
   meterData = String("");
 
   while (1) {
     String line = Serial1.readStringUntil('\n');
-    Log.info(line);
     meterData.concat(line);
     if (line.startsWith("!")) {
-      digitalWrite(D7, 0);
       return;
     }
   }
+}
+
+/**
+ * Define our own Serial1 buffer so we can have a longer
+ * delay in the loop to preserve power
+ */
+hal_usart_buffer_config_t acquireSerial1Buffer() {
+  const size_t bufferSize = 1024;
+  hal_usart_buffer_config_t config = {
+      .size = sizeof(hal_usart_buffer_config_t),
+      .rx_buffer = new (std::nothrow) uint8_t[bufferSize],
+      .rx_buffer_size = bufferSize,
+      .tx_buffer = new (std::nothrow) uint8_t[bufferSize],
+      .tx_buffer_size = bufferSize
+  };
+  return config;
 }
