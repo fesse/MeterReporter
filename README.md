@@ -3,8 +3,8 @@
 A Particle project named MeterReporter
 Read Serial1 at 115200 from the PowerMeter. Relay the result on a webpage.
 
-For web page interface: http://192.168.1.202
-For raw data: http://192.168.1.202/status
+For web page interface: http://power
+For raw data: http://power/status
 
 If changes are made inside the web folder, the generated resources needs to be
 recreated by running ./CreateWebResources

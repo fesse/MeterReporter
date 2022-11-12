@@ -1,6 +1,6 @@
 meterInterface = function () {
 
-	const STATUS_URL = "http://192.168.1.202/status";
+	const STATUS_URL = "http://power/status";
 	const TIME = "0-0:1.0.0";
 	const ACTIVE_EFFECT_CONSUMPTION = "1-0:1.7.0";
 	const ACTIVE_EFFECT_PRODUCTION = "1-0:2.7.0";
